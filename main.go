@@ -84,7 +84,6 @@ func main() {
 	}
 	if *cmds != "" {
 		cmdList = g.SplitString(*cmds, ";")
-
 	}
 	if *ciphers != "" {
 		cipherList = g.SplitString(*ciphers)
