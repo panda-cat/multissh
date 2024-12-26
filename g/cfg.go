@@ -44,10 +44,7 @@ type SSHResult struct {
 func SplitString(str string) (strList []string) {
 	if str == "" {
 		return
-	} 
-	if strings.Contains(str, ",") {
-		strList = strings.Split(str, ",")
-	} else  {
+	}  else  {
 		strList = strings.Split(str, ";")
 	}
 	return
