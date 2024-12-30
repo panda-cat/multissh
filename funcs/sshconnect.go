@@ -99,11 +99,6 @@ func connect(user, password, host, key string, port int, cipherList, keyExchange
 
 	return nil, err
 }
-	
-	// create session
-	if session, err = client.NewSession(); err != nil {
-		return nil, err
-	}
 
 	modes := ssh.TerminalModes{
 		ssh.ECHO:          0,     // disable echoing
