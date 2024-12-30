@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"fmt"
 	"io/ioutil"
-	"log"
+
 	"net"
 	"strconv"
 	"strings"
@@ -67,40 +67,15 @@ func connect(user, password, host, key string, port int, cipherList, keyExchange
 		},
 	}
 
-	// Connect to ssh
+	// connet to ssh
 	addr = fmt.Sprintf("%s:%d", host, port)
 
-	if client, err = ssh.Dial("tcp", addr, clientConfig); err == nil {
-		session, err = client.NewSession()
-		if err != nil {
-			client.Close()
-			return nil, err
-		}
-	} else if strings.Contains(err.Error(), "Username:") {
-		log.Printf("Detected 'Username:' prompt for host: %s", host)
+	if client, err = ssh.Dial("tcp", addr, clientConfig); err != nil {
+		return nil, err
+	}
 
-		clientConfig.Auth = []ssh.AuthMethod{ssh.KeyboardInteractive(func(username, instruction string, questions []string, echos []bool) ([]string, error) {
-			responses := make([]string, len(questions))
-			for i, question := range questions {
-				if question == "Username:" {
-					responses[i] = user
-				} else if strings.Contains(question, "assword:") {
-					responses[i] = password // Provide password if prompted
-				}
-			}
-			return responses, nil
-		})}
-
-		client, err = ssh.Dial("tcp", addr, clientConfig)
-		if err != nil {
-			return nil, err
-		}
-		session, err = client.NewSession()
-		if err != nil {
-			client.Close()
-			return nil, err
-		}
-	} else {
+	// create session
+	if session, err = client.NewSession(); err != nil {
 		return nil, err
 	}
 
@@ -111,8 +86,6 @@ func connect(user, password, host, key string, port int, cipherList, keyExchange
 	}
 
 	if err := session.RequestPty("xterm", 80, 40, modes); err != nil {
-		session.Close()
-		client.Close()
 		return nil, err
 	}
 
