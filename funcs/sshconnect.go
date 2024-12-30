@@ -76,13 +76,13 @@ func connect(user, password, host, key string, port int, cipherList, keyExchange
 			client.Close()
 			return nil, err
 		}
-	} else if strings.Contains(err.Error(), "User Name:") || strings.Contains(err.Error(), "Login:") {
-		log.Printf("Detected 'User Name:' prompt for host: %s", host)
+	} else if strings.Contains(err.Error(), "Username:") {
+		log.Printf("Detected 'Username:' prompt for host: %s", host)
 
 		clientConfig.Auth = []ssh.AuthMethod{ssh.KeyboardInteractive(func(username, instruction string, questions []string, echos []bool) ([]string, error) {
 			responses := make([]string, len(questions))
 			for i, question := range questions {
-				if strings.Contains(question, "User Name:") || strings.Contains(question, "Login:") {
+				if question == "Username:" {
 					responses[i] = user
 				} else if strings.Contains(question, "assword:") {
 					responses[i] = password // Provide password if prompted
